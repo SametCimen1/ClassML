@@ -44,17 +44,19 @@ class EyeDiseaseDataset:
             files, labels = self.dataPaths()
             df = self.dataFrame(files, labels)
             strat = df['labels']
-            trainData, dummyData = train_test_split(df, train_size=0.8, shuffle=True, random_state=42, stratify=strat)
+            trainData, dummyData = train_test_split(df, train_size=None, shuffle=True, random_state=42, stratify=strat)
             strat = dummyData['labels']
-            validData, testData = train_test_split(dummyData, train_size=0.5, shuffle=True, random_state=42, stratify=strat)
+            validData, testData = train_test_split(dummyData, train_size=None, shuffle=True, random_state=42, stratify=strat)
             return trainData, validData, testData
 
-dataDir="C:\\Users\\cimen\\Desktop\\code\\ClassML\\content\\dataset"
+dataDir="C:\\Users\\cimen\\Desktop\\code\\tenserflow\\content\\dataset"
 
 
 dataSplit = EyeDiseaseDataset(dataDir)
 train_data, valid_data, test_data = dataSplit.split_()
 
+print("TEST DATA")
+print(test_data)
 
 def augment_data( train_df, valid_df, test_df, batch_size=32):      
   img_size = (256,256)
@@ -152,9 +154,11 @@ optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
 
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
+
+
 history = model.fit(
     train_augmented,
-    epochs=1,
+    epochs=1, ## sets the # of epochs, more epochs, better results.
     validation_data=valid_augmented,
 )
 
@@ -199,4 +203,13 @@ def plot_actual_vs_predicted(model, test_data, num_samples=3):
             plt.axis('off')
             plt.show()
   
+
+# print("HER IN NEW TESt")
+# testDataDir="C:\\Users\\cimen\\Desktop\\code\\tenserflow\\testcontent"
+# dataSplit = EyeDiseaseDataset(testDataDir)
+# test_data = dataSplit.split_()
+# test_augmented = augment_data(train_data, valid_data, test_data)
+# print("NEW TEST FILEs")
+# print(test_data)
+
 plot_actual_vs_predicted(model, test_augmented)
